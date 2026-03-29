@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,66 +10,116 @@
         body { background-color: #000; color: white; font-family: sans-serif; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         .glass-card { background: rgba(23, 23, 23, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .hero-text { font-style: italic; font-weight: 900; letter-spacing: -0.05em; }
+        .icon-btn { position: relative; width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; background: #111; border: 3px solid; box-shadow: inset 0 0 15px rgba(255,255,255,0.05), 0 5px 20px rgba(0,0,0,0.4); transition: 0.2s; }
+        
+        /* Panel de Admin Escondido */
+        #admin-panel { display: none; position: fixed; inset: 0; background: #000; z-index: 9999; overflow-y: auto; padding: 20px; }
+        .admin-btn { width: 100%; padding: 15px; border-radius: 15px; background: #111; border: 1px solid #333; font-weight: 800; font-size: 10px; text-transform: uppercase; color: #3b82f6; margin-bottom: 10px; }
+        
+        #scan-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
+    <!-- HEADER CON DISPARADOR DE ADMIN (5 CLICS) -->
     <header class="flex flex-col items-center pt-12 pb-10 bg-black">
-        <img src="logo.png.jpg" alt="MontCode Logo" class="w-full max-w-[380px] px-4 mb-4">
-        <p class="text-[9px] font-bold text-blue-500 uppercase tracking-[0.15em] text-center px-6">
+        <img src="logo.png.jpg" id="main-logo" alt="MontCode Logo" class="w-full max-w-[380px] px-4 mb-2 cursor-pointer">
+        <p class="text-[9px] font-bold text-blue-500 uppercase tracking-[0.15em] text-center px-6 italic">
             Created by Providers • Tested by Patients • Trusted for Life
         </p>
     </header>
 
-    <!-- Franja Azul de Identidad -->
-    <div class="h-[60px] bg-blue-600 w-full mb-12 shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center justify-center">
-        <span class="text-white font-black italic uppercase tracking-[0.3em] text-[12px]">Cardio-Metabolic Kit</span>
+    <div class="h-[60px] bg-blue-600 w-full mb-10 shadow-[0_0_25px_rgba(37,99,235,0.5)] flex items-center justify-center">
+        <span class="text-white font-black italic uppercase tracking-[0.3em] text-[13px]">Cardio-Metabolic Kit</span>
     </div>
 
+    <!-- UI PRINCIPAL -->
     <main class="flex-grow px-6 space-y-6 max-w-md mx-auto w-full">
-        <p class="text-[10px] font-black text-zinc-500 uppercase italic mb-2 ml-2 tracking-widest text-center">
-            Clinical Management Suite
-        </p>
-
-        <!-- Tool 1: Metabolic AI -->
-        <a href="https://montcode-metabolic-ai.vercel.app" 
-           class="glass-card w-full p-8 rounded-[40px] flex items-center justify-between active:scale-95 transition-all">
+        <a href="https://montcode-metabolic-ai.vercel.app" class="glass-card w-full p-6 rounded-[40px] flex items-center justify-between active:scale-95 transition-all">
             <div class="flex items-center space-x-5">
-                <div class="bg-blue-600/10 h-16 w-16 rounded-3xl flex items-center justify-center text-3xl">🥗</div>
-                <div>
-                    <h2 class="hero-text text-2xl uppercase leading-none">Metabolic AI</h2>
-                    <p class="text-[9px] text-zinc-500 font-bold uppercase mt-2 tracking-wider">Nutrition & Glucose Logic</p>
-                </div>
+                <div class="icon-btn" style="border-color: #a855f7;"><img src="https://img.icons8.com/fluency/96/scale.png"></div>
+                <div><h2 class="hero-text text-2xl uppercase leading-none">Metabolic Tool</h2><p class="text-[9px] text-zinc-500 font-bold uppercase mt-2 italic">Wellness Logic</p></div>
             </div>
-            <span class="text-blue-600 text-2xl font-black">→</span>
+            <span class="text-zinc-700 text-2xl font-black">→</span>
         </a>
 
-        <!-- Tool 2: CHF Monitor -->
-        <a href="https://preventivehp.github.io/montcode-pwa/chf/index.html" 
-           class="glass-card w-full p-8 rounded-[40px] flex items-center justify-between active:scale-95 transition-all">
+        <a href="https://preventivehp.github.io/montcode-pwa/chf/index.html" class="glass-card w-full p-6 rounded-[40px] flex items-center justify-between active:scale-95 transition-all">
             <div class="flex items-center space-x-5">
-                <div class="bg-red-600/10 h-16 w-16 rounded-3xl flex items-center justify-center text-3xl">🫀</div>
-                <div>
-                    <h2 class="hero-text text-2xl uppercase leading-none">CHF Monitor</h2>
-                    <p class="text-[9px] text-zinc-500 font-bold uppercase mt-2 tracking-wider">Heart Failure Tracking</p>
-                </div>
+                <div class="icon-btn" style="border-color: #f97316;"><img src="https://img.icons8.com/fluency/96/heart-with-pulse.png"></div>
+                <div><h2 class="hero-text text-2xl uppercase leading-none">CHF Assist</h2><p class="text-[9px] text-zinc-500 font-bold uppercase mt-2 italic">Wellness Tracking</p></div>
             </div>
-            <span class="text-blue-600 text-2xl font-black">→</span>
+            <span class="text-zinc-700 text-2xl font-black">→</span>
         </a>
     </main>
 
-    <footer class="mt-auto py-12 text-center">
-        <p class="text-[8px] text-zinc-700 font-black uppercase leading-relaxed tracking-[0.2em] px-10">
-            Secure Local Logic • 256-bit PWA Encryption<br>
-            MontCode™ 2026 - Clinical Kit CM
+    <!-- PANEL ADMINISTRADOR ESCONDIDO -->
+    <div id="admin-panel">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-xl font-black italic text-blue-500 uppercase">Admin Engine CM</h1>
+            <button onclick="closeAdmin()" class="text-xs font-bold text-red-500 border border-red-500 px-3 py-1 rounded-full uppercase">Cerrar</button>
+        </div>
+        
+        <p class="text-[9px] font-black text-zinc-500 uppercase mb-4 tracking-widest">NFC Programming Tools</p>
+        <button onclick="writeNFC('KIT_CM')" class="admin-btn border-blue-600 bg-blue-900/10">Sync NFC: Master Kit CM</button>
+        <button onclick="writeNFC('METABOLIC')" class="admin-btn">Sync NFC: Metabolic Tool</button>
+        <button onclick="writeNFC('CHF')" class="admin-btn">Sync NFC: CHF Assist</button>
+        
+        <div class="mt-10 p-6 border border-zinc-900 rounded-3xl bg-zinc-950">
+            <p class="text-[8px] text-zinc-600 uppercase font-black mb-2">System Info</p>
+            <p class="text-[10px] text-zinc-400 font-mono italic">Repo: montcode-kit-cm<br>Status: Local Sync Active</p>
+        </div>
+    </div>
+
+    <!-- OVERLAY DE ESCANEO -->
+    <div id="scan-overlay">
+        <div class="w-20 h-20 bg-blue-600 rounded-full animate-pulse flex items-center justify-center text-3xl mb-4">📡</div>
+        <h2 class="text-lg font-black uppercase text-center" id="scan-msg">Ready to Sync</h2>
+        <p class="text-[10px] text-zinc-500 mt-2 uppercase font-bold">Approach NFC Chip to Phone</p>
+    </div>
+
+    <footer class="mt-auto py-10 text-center">
+        <p class="text-[8px] text-zinc-600 font-black uppercase leading-relaxed tracking-[0.1em] px-12 italic">
+            *This is a wellness tool for personal information only.*
         </p>
     </footer>
 
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js');
-            });
+        // Lógica de 5 clics para el logo
+        let logoClicks = 0;
+        document.getElementById('main-logo').addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks >= 5) {
+                document.getElementById('admin-panel').style.display = 'block';
+                logoClicks = 0;
+            }
+            setTimeout(() => { logoClicks = 0; }, 3000); // Reset tras 3 segundos
+        });
+
+        function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
+
+        // Función Maestra de Escritura NFC
+        async function writeNFC(type) {
+            if (!('NDEFReader' in window)) return alert("NFC not supported on this device/browser.");
+            
+            const overlay = document.getElementById('scan-overlay');
+            const msg = document.getElementById('scan-msg');
+            overlay.style.display = 'flex';
+            msg.innerText = `Syncing ${type}...`;
+
+            try {
+                const ndef = new NDEFReader();
+                let url;
+                if(type === 'KIT_CM') url = window.location.href;
+                if(type === 'METABOLIC') url = "https://montcode-metabolic-ai.vercel.app";
+                if(type === 'CHF') url = "https://preventivehp.github.io/montcode-pwa/chf/index.html";
+
+                await ndef.write({ records: [{ recordType: "url", data: url }] });
+                overlay.style.display = 'none';
+                alert("NFC Synced Successfully!");
+            } catch (error) {
+                overlay.style.display = 'none';
+                alert("Sync Failed: Try again.");
+            }
         }
     </script>
 </body>
