@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,73 +8,111 @@
     <link rel="manifest" href="manifest.json">
     <style>
         body { background-color: #000; color: white; font-family: sans-serif; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
-        .glass-card { background: rgba(23, 23, 23, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card { background: rgba(23, 23, 23, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; }
         .hero-text { font-style: italic; font-weight: 900; letter-spacing: -0.05em; }
-        .icon-btn { position: relative; width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; background: #111; border: 3px solid; box-shadow: inset 0 0 15px rgba(255,255,255,0.05), 0 5px 20px rgba(0,0,0,0.4); transition: 0.2s; }
+        
+        /* Iconos Originales con Efecto Neón */
+        .icon-btn { 
+            position: relative; 
+            width: 75px; 
+            height: 75px; 
+            border-radius: 22px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: #0a0a0a; 
+            border: 2px solid; 
+            font-size: 32px;
+            transition: 0.3s;
+        }
+
+        /* Variaciones de Neón */
+        .neon-purple { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4), inset 0 0 10px rgba(168, 85, 247, 0.2); text-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
+        .neon-orange { border-color: #f97316; box-shadow: 0 0 15px rgba(249, 115, 22, 0.4), inset 0 0 10px rgba(249, 115, 22, 0.2); text-shadow: 0 0 10px rgba(249, 115, 22, 0.5); }
         
         /* Panel de Admin Escondido */
         #admin-panel { display: none; position: fixed; inset: 0; background: #000; z-index: 9999; overflow-y: auto; padding: 20px; }
-        .admin-btn { width: 100%; padding: 15px; border-radius: 15px; background: #111; border: 1px solid #333; font-weight: 800; font-size: 10px; text-transform: uppercase; color: #3b82f6; margin-bottom: 10px; }
+        .admin-btn { width: 100%; padding: 18px; border-radius: 20px; background: #111; border: 1px solid #333; font-weight: 800; font-size: 11px; text-transform: uppercase; color: #3b82f6; margin-bottom: 12px; letter-spacing: 0.1em; }
         
-        #scan-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; }
+        #scan-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; }
+        
+        .pulse-blue { animation: pulse-blue 2s infinite; }
+        @keyframes pulse-blue { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <!-- HEADER CON DISPARADOR DE ADMIN (5 CLICS) -->
+    <!-- HEADER CON DISPARADOR DE ADMIN -->
     <header class="flex flex-col items-center pt-12 pb-10 bg-black">
-        <img src="logo.png.jpg" id="main-logo" alt="MontCode Logo" class="w-full max-w-[380px] px-4 mb-2 cursor-pointer">
+        <img src="logo.png.jpg" id="main-logo" alt="MontCode Logo" class="w-full max-w-[380px] px-4 mb-2 cursor-pointer active:opacity-50 transition-opacity">
         <p class="text-[9px] font-bold text-blue-500 uppercase tracking-[0.15em] text-center px-6 italic">
             Created by Providers • Tested by Patients • Trusted for Life
         </p>
     </header>
 
-    <div class="h-[60px] bg-blue-600 w-full mb-10 shadow-[0_0_25px_rgba(37,99,235,0.5)] flex items-center justify-center">
+    <!-- BANNER KIT -->
+    <div class="h-[60px] bg-blue-600 w-full mb-10 shadow-[0_0_30px_rgba(37,99,235,0.4)] flex items-center justify-center">
         <span class="text-white font-black italic uppercase tracking-[0.3em] text-[13px]">Cardio-Metabolic Kit</span>
     </div>
 
-    <!-- UI PRINCIPAL -->
+    <!-- UI PRINCIPAL CON ICONOS ORIGINALES -->
     <main class="flex-grow px-6 space-y-6 max-w-md mx-auto w-full">
-        <a href="https://montcode-metabolic-ai.vercel.app" class="glass-card w-full p-6 rounded-[40px] flex items-center justify-between active:scale-95 transition-all">
+        
+        <!-- METABOLIC TOOL -->
+        <a href="https://montcode-metabolic-ai.vercel.app" class="glass-card w-full p-6 rounded-[40px] flex items-center justify-between active:scale-95">
             <div class="flex items-center space-x-5">
-                <div class="icon-btn" style="border-color: #a855f7;"><img src="https://img.icons8.com/fluency/96/scale.png"></div>
-                <div><h2 class="hero-text text-2xl uppercase leading-none">Metabolic Tool</h2><p class="text-[9px] text-zinc-500 font-bold uppercase mt-2 italic">Wellness Logic</p></div>
+                <div class="icon-btn neon-purple">⚖️</div>
+                <div>
+                    <h2 class="hero-text text-2xl uppercase leading-none">Metabolic Tool</h2>
+                    <p class="text-[9px] text-zinc-500 font-bold uppercase mt-2 italic tracking-wider">Wellness Logic</p>
+                </div>
             </div>
-            <span class="text-zinc-700 text-2xl font-black">→</span>
+            <span class="text-zinc-800 text-2xl font-black">→</span>
         </a>
 
-        <a href="https://preventivehp.github.io/montcode-pwa/chf/index.html" class="glass-card w-full p-6 rounded-[40px] flex items-center justify-between active:scale-95 transition-all">
+        <!-- CHF ASSIST -->
+        <a href="https://preventivehp.github.io/montcode-pwa/chf/index.html" class="glass-card w-full p-6 rounded-[40px] flex items-center justify-between active:scale-95">
             <div class="flex items-center space-x-5">
-                <div class="icon-btn" style="border-color: #f97316;"><img src="https://img.icons8.com/fluency/96/heart-with-pulse.png"></div>
-                <div><h2 class="hero-text text-2xl uppercase leading-none">CHF Assist</h2><p class="text-[9px] text-zinc-500 font-bold uppercase mt-2 italic">Wellness Tracking</p></div>
+                <div class="icon-btn neon-orange">🫀</div>
+                <div>
+                    <h2 class="hero-text text-2xl uppercase leading-none">CHF Assist</h2>
+                    <p class="text-[9px] text-zinc-500 font-bold uppercase mt-2 italic tracking-wider">Wellness Tracking</p>
+                </div>
             </div>
-            <span class="text-zinc-700 text-2xl font-black">→</span>
+            <span class="text-zinc-800 text-2xl font-black">→</span>
         </a>
     </main>
 
-    <!-- PANEL ADMINISTRADOR ESCONDIDO -->
-    <div id="admin-panel">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-xl font-black italic text-blue-500 uppercase">Admin Engine CM</h1>
-            <button onclick="closeAdmin()" class="text-xs font-bold text-red-500 border border-red-500 px-3 py-1 rounded-full uppercase">Cerrar</button>
+    <!-- PANEL ADMINISTRADOR (5 CLICS) -->
+    <div id="admin-panel" class="p-8">
+        <div class="flex justify-between items-center mb-10">
+            <h1 class="text-xl font-black italic text-blue-500 uppercase tracking-tighter text-2xl">Admin Engine CM</h1>
+            <button onclick="closeAdmin()" class="text-[10px] font-black text-red-500 border-2 border-red-500 px-4 py-1 rounded-full uppercase italic">Exit</button>
         </div>
         
-        <p class="text-[9px] font-black text-zinc-500 uppercase mb-4 tracking-widest">NFC Programming Tools</p>
-        <button onclick="writeNFC('KIT_CM')" class="admin-btn border-blue-600 bg-blue-900/10">Sync NFC: Master Kit CM</button>
-        <button onclick="writeNFC('METABOLIC')" class="admin-btn">Sync NFC: Metabolic Tool</button>
-        <button onclick="writeNFC('CHF')" class="admin-btn">Sync NFC: CHF Assist</button>
+        <div class="space-y-3">
+            <p class="text-[9px] font-black text-zinc-500 uppercase mb-4 tracking-[0.2em] ml-2">Hardware / NFC Linker</p>
+            <button onclick="writeNFC('KIT_CM')" class="admin-btn border-blue-600 bg-blue-900/10">Sync NFC: Master Kit CM</button>
+            <button onclick="writeNFC('METABOLIC')" class="admin-btn">Sync NFC: Metabolic Tool</button>
+            <button onclick="writeNFC('CHF')" class="admin-btn">Sync NFC: CHF Assist</button>
+        </div>
         
-        <div class="mt-10 p-6 border border-zinc-900 rounded-3xl bg-zinc-950">
-            <p class="text-[8px] text-zinc-600 uppercase font-black mb-2">System Info</p>
-            <p class="text-[10px] text-zinc-400 font-mono italic">Repo: montcode-kit-cm<br>Status: Local Sync Active</p>
+        <div class="mt-12 p-6 border border-zinc-900 rounded-[30px] bg-zinc-950/50">
+            <p class="text-[8px] text-zinc-600 uppercase font-black mb-2 tracking-widest">Core Status</p>
+            <p class="text-[10px] text-zinc-500 font-mono italic leading-relaxed">
+                Repo: montcode-kit-cm<br>
+                Mode: Production Deploy<br>
+                NFC: WebNDEF v5.7
+            </p>
         </div>
     </div>
 
     <!-- OVERLAY DE ESCANEO -->
     <div id="scan-overlay">
-        <div class="w-20 h-20 bg-blue-600 rounded-full animate-pulse flex items-center justify-center text-3xl mb-4">📡</div>
-        <h2 class="text-lg font-black uppercase text-center" id="scan-msg">Ready to Sync</h2>
-        <p class="text-[10px] text-zinc-500 mt-2 uppercase font-bold">Approach NFC Chip to Phone</p>
+        <div class="w-24 h-24 bg-blue-600 rounded-3xl pulse-blue flex items-center justify-center text-4xl mb-6 shadow-[0_0_50px_rgba(37,99,235,0.4)]">📡</div>
+        <h2 class="text-xl font-black uppercase text-center italic tracking-tight" id="scan-msg">Ready to Sync</h2>
+        <p class="text-[11px] text-zinc-500 mt-3 uppercase font-black tracking-widest">Hold NFC Chip to Phone</p>
+        <button onclick="document.getElementById('scan-overlay').style.display='none'" class="mt-20 text-zinc-700 font-bold uppercase text-[10px] tracking-[0.3em]">Cancel Process</button>
     </div>
 
     <footer class="mt-auto py-10 text-center">
@@ -84,7 +122,7 @@
     </footer>
 
     <script>
-        // Lógica de 5 clics para el logo
+        // Lógica de 5 clics para el logo (Seguridad MontCode)
         let logoClicks = 0;
         document.getElementById('main-logo').addEventListener('click', () => {
             logoClicks++;
@@ -92,19 +130,19 @@
                 document.getElementById('admin-panel').style.display = 'block';
                 logoClicks = 0;
             }
-            setTimeout(() => { logoClicks = 0; }, 3000); // Reset tras 3 segundos
+            setTimeout(() => { logoClicks = 0; }, 3000); 
         });
 
         function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
 
-        // Función Maestra de Escritura NFC
+        // Escritura NFC Profesional
         async function writeNFC(type) {
-            if (!('NDEFReader' in window)) return alert("NFC not supported on this device/browser.");
+            if (!('NDEFReader' in window)) return alert("NFC NOT SUPPORTED");
             
             const overlay = document.getElementById('scan-overlay');
             const msg = document.getElementById('scan-msg');
             overlay.style.display = 'flex';
-            msg.innerText = `Syncing ${type}...`;
+            msg.innerText = `Burning ${type}...`;
 
             try {
                 const ndef = new NDEFReader();
@@ -113,13 +151,26 @@
                 if(type === 'METABOLIC') url = "https://montcode-metabolic-ai.vercel.app";
                 if(type === 'CHF') url = "https://preventivehp.github.io/montcode-pwa/chf/index.html";
 
-                await ndef.write({ records: [{ recordType: "url", data: url }] });
+                await ndef.write({
+                    records: [
+                        { recordType: "url", data: url },
+                        { recordType: "text", data: `MONTCODE_${type}` }
+                    ]
+                });
+                
                 overlay.style.display = 'none';
-                alert("NFC Synced Successfully!");
+                alert("Burn Successful: " + type);
             } catch (error) {
                 overlay.style.display = 'none';
-                alert("Sync Failed: Try again.");
+                alert("Sync Failed. Ensure NFC is active.");
             }
+        }
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
+            });
         }
     </script>
 </body>
