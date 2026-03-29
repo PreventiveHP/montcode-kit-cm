@@ -1,8 +1,8 @@
- {
+{
   "name": "MontCode Kit-CM",
   "short_name": "Kit-CM",
   "description": "Cardio-Metabolic Wellness Kit by MontCode",
-  "start_url": "./index.html",
+  "start_url": "index.htm",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#000000",
@@ -12,7 +12,13 @@
       "src": "logo.png.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable"
     }
   ]
 }
