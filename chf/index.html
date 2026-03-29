@@ -1,1 +1,297 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MontCode™ Clinical Pro v5.9</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary: #007AFF; --success: #34c759; --danger: #ff3b30; --bg: #f2f2f7; }
+        
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 10px; display: flex; justify-content: center; }
 
+        #app { 
+            width: 100%; max-width: 414px; background: #fff; border-radius: 35px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); display: flex; flex-direction: column; 
+            overflow: hidden; height: auto; min-height: 92vh;
+        }
+        
+        header { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .nav-tabs { display: flex; background: #fafafa; border-bottom: 1px solid #eee; }
+        .tab { flex: 1; text-align: center; padding: 14px; font-size: 0.75rem; font-weight: 800; color: #8e8e93; cursor: pointer; }
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #fff; }
+
+        .module { display: none; padding: 15px; flex-grow: 1; }
+        .module.active { display: block; animation: fadeIn 0.2s ease-out; }
+
+        /* Rescate: Teaching Boxes */
+        .teaching-box { background: #ffffff; border-radius: 18px; margin-bottom: 12px; border: 1px solid #e1e8ed; overflow: hidden; }
+        .teaching-header { padding: 14px 18px; cursor: pointer; font-weight: 700; font-size: 0.8rem; color: #1c1c1e; display: flex; justify-content: space-between; align-items: center; }
+        .teaching-content { display: none; padding: 0 18px 18px; font-size: 0.8rem; color: #3a3a3c; line-height: 1.4; border-top: 1px solid #f2f2f7; }
+
+        .card { background: #fff; padding: 15px; border-radius: 20px; border: 1px solid #eee; margin-bottom: 15px; }
+        .chart-container { position: relative; height: 200px; width: 100%; }
+
+        /* Scanner */
+        .scanner-view { position: relative; width: 100%; aspect-ratio: 3/4; background: #000; border-radius: 25px; overflow: hidden; margin-bottom: 10px; }
+        #video { width: 100%; height: 100%; object-fit: cover; }
+        #ghost-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.35; pointer-events: none; filter: sepia(100%) hue-rotate(100deg); display: none; }
+        #mask { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 170px; height: 270px; border: 3px solid var(--danger); border-radius: 60px; box-shadow: 0 0 0 1000px rgba(0,0,0,0.4); pointer-events: none; }
+        #mask.locked { border-color: var(--success); box-shadow: 0 0 20px var(--success); }
+
+        .btn { border: none; border-radius: 12px; padding: 15px; font-weight: 700; cursor: pointer; width: 100%; font-size: 0.85rem; transition: opacity 0.2s; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; text-align: center; font-size: 1rem; background: #fafafa; }
+        
+        .ef-row { background: #f8f9fa; padding: 8px 12px; border-radius: 10px; margin-top: 5px; display: flex; justify-content: space-between; font-size: 0.8rem; border: 1px solid #eee; }
+        .disclaimer { font-size: 0.65rem; color: #777; text-align: center; padding: 15px; line-height: 1.4; border-top: 1px solid #eee; background: #f9f9f9; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media print {
+            #app { box-shadow: none; border: none; width: 100%; }
+            .nav-tabs, .btn, .scanner-view, input, header button, #ef-input { display: none !important; }
+            .module { display: block !important; }
+            .teaching-content { display: block !important; }
+            .teaching-box { border: 1px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <span style="font-weight: 900; font-size: 1.1rem;">MontCode™ <small style="color:var(--success)">PRO</small></span>
+        <button onclick="toggleLang()" id="langBtn" style="background:#f2f2f7; border:1px solid #ddd; border-radius:8px; padding:6px 12px; cursor:pointer; font-weight:bold;">🇺🇸</button>
+    </header>
+
+    <div class="nav-tabs">
+        <div class="tab active" onclick="switchTab('data')" id="t-data">VITAL LOGS</div>
+        <div class="tab" onclick="switchTab('scan')" id="t-scan">GHOST SCAN AI</div>
+    </div>
+
+    <div id="data" class="module active">
+        <div class="teaching-box">
+            <div class="teaching-header" onclick="toggleT('acc-ef')"><span id="txt-ef-title">+ EJECTION FRACTION (EF) GUIDE (AHA)</span><span>▼</span></div>
+            <div class="teaching-content" id="acc-ef">
+                <p>EF measures how much blood your heart pumps out. <a href="https://www.heart.org/en/health-topics/heart-failure/diagnosing-heart-failure/ejection-fraction-heart-failure-measurement" target="_blank" style="color:var(--primary)">AHA Full Guide</a></p>
+                <div style="display:flex; gap:5px; margin-bottom:10px;">
+                    <input type="number" id="ef-input" placeholder="EF %" style="width:70%;">
+                    <button onclick="saveEF()" class="btn" style="background:var(--primary); color:white; padding:10px; width:30%;">SAVE</button>
+                </div>
+                <div id="ef-list"></div>
+                <ul style="padding-left:15px; font-size:0.75rem;">
+                    <li><b>≥50%:</b> Preserved Function.</li>
+                    <li><b>41-49%:</b> Mildly Reduced.</li>
+                    <li><b>≤40%:</b> Reduced Function.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="teaching-box">
+            <div class="teaching-header" onclick="toggleT('acc-aha')"><span id="txt-aha-title">+ AHA ANKLE PROTOCOL</span><span>▼</span></div>
+            <div class="teaching-content" id="acc-aha">
+                <p>Measure 2cm above the ankle bone daily at the same time to track fluid retention shifts.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="chart-container"><canvas id="dualChart"></canvas></div>
+        </div>
+
+        <div class="card">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                <input type="number" id="in-w" placeholder="Weight (Lb)">
+                <input type="number" id="in-cm" placeholder="Ankle (Cm)">
+            </div>
+            <button class="btn" style="background:var(--primary); color:white;" onclick="saveEntry()" id="btn-save">SAVE DAILY DATA</button>
+        </div>
+
+        <div class="card">
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:8px;">
+                <input type="text" id="dr-name" placeholder="Search Dr. Office">
+                <button class="btn" style="background:var(--success); color:white;" onclick="findDr()" id="btn-maps">📍 MAPS</button>
+            </div>
+        </div>
+
+        <button class="btn" style="background:#1c1c1e; color:white;" onclick="window.print()" id="btn-pdf">📄 GENERATE PDF REPORT</button>
+        
+        <div class="disclaimer" id="legal-text">
+            <b>MEDICAL DISCLAIMER:</b> This is a <b>wellness tracking tool</b> based on AHA guidelines. Not for diagnosis. Data is user-entered. Consult your cardiologist.
+        </div>
+    </div>
+
+    <div id="scan" class="module">
+        <div class="scanner-view">
+            <video id="video" autoplay playsinline></video>
+            <img id="ghost-overlay" src="">
+            <div id="mask"></div>
+            <div id="scan-status" style="position:absolute; bottom:20px; width:100%; text-align:center; color:white; font-size:0.7rem; font-weight:900;">AI SENSORS ACTIVE</div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <button class="btn" style="background:var(--primary); color:white;" onclick="setBaseline()">A: BASELINE</button>
+            <button class="btn" style="background:var(--success); color:white;" onclick="compareAI()">B: AI COMPARE</button>
+        </div>
+        <button class="btn" style="background:#ff3b3022; color:var(--danger); border:1px solid var(--danger); margin-top:10px;" onclick="clearHistory()" id="btn-reset">RESET ALL DATA</button>
+        <div id="daily-diff" style="margin-top:10px; text-align:center; font-weight:800; font-size:1rem;"></div>
+    </div>
+</div>
+
+<script>
+    let currentLang = 'EN';
+    let database = JSON.parse(localStorage.getItem('mont_pro_db')) || [];
+    let efRecords = JSON.parse(localStorage.getItem('mont_ef_history')) || [];
+
+    const translations = {
+        EN: { tData: "VITAL LOGS", tScan: "GHOST SCAN AI", efT: "+ EF FRACTION GUIDE (AHA)", ahaT: "+ AHA ANKLE PROTOCOL", save: "SAVE DAILY DATA", pdf: "📄 GENERATE PDF REPORT", placeholderW: "Weight (Lb)", placeholderC: "Ankle (Cm)", reset: "RESET / CLEAR ALL DATA", legal: "<b>MEDICAL DISCLAIMER:</b> This is a <b>wellness tracking tool</b> based on AHA concept guidelines. It is NOT a medical diagnosis." },
+        ES: { tData: "REGISTROS", tScan: "ESCÁNER FANTASMA", efT: "+ GUÍA DE FRACCIÓN EF (AHA)", ahaT: "+ PROTOCOLO TOBILLO AHA", save: "GUARDAR DATOS", pdf: "📄 GENERAR REPORTE PDF", placeholderW: "Peso (Lb)", placeholderC: "Cm Tobillo", reset: "REINICIAR / BORRAR TODO", legal: "<b>AVISO MÉDICO:</b> Herramienta de <b>bienestar</b> basada en guías AHA. NO es un diagnóstico médico." }
+    };
+
+    function toggleLang() {
+        currentLang = (currentLang === 'EN') ? 'ES' : 'EN';
+        const lang = translations[currentLang];
+        document.getElementById('langBtn').innerText = (currentLang === 'EN') ? '🇺🇸' : '🇲🇽';
+        document.getElementById('t-data').innerText = lang.tData;
+        document.getElementById('t-scan').innerText = lang.tScan;
+        document.getElementById('txt-ef-title').innerText = lang.efT;
+        document.getElementById('txt-aha-title').innerText = lang.ahaT;
+        document.getElementById('btn-save').innerText = lang.save;
+        document.getElementById('btn-pdf').innerText = lang.pdf;
+        document.getElementById('btn-reset').innerText = lang.reset;
+        document.getElementById('in-w').placeholder = lang.placeholderW;
+        document.getElementById('in-cm').placeholder = lang.placeholderC;
+        document.getElementById('legal-text').innerHTML = lang.legal;
+    }
+
+    function switchTab(id) {
+        document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('t-'+id).classList.add('active');
+        if(id === 'scan') { startCam(); loadGhost(); }
+    }
+
+    function toggleT(id) {
+        const el = document.getElementById(id);
+        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function saveEF() {
+        const val = document.getElementById('ef-input').value;
+        if(!val) return;
+        efRecords.push({ date: new Date().toLocaleDateString(), value: val });
+        localStorage.setItem('mont_ef_history', JSON.stringify(efRecords));
+        document.getElementById('ef-input').value = '';
+        renderEF();
+    }
+
+    function renderEF() {
+        const list = document.getElementById('ef-list');
+        list.innerHTML = efRecords.map((r, i) => `
+            <div class="ef-row">
+                <span><b>${r.date}:</b> ${r.value}%</span>
+                <span onclick="deleteEF(${i})" style="color:var(--danger); font-weight:bold; cursor:pointer;">X</span>
+            </div>
+        `).join('');
+    }
+
+    function deleteEF(idx) {
+        efRecords.splice(idx, 1);
+        localStorage.setItem('mont_ef_history', JSON.stringify(efRecords));
+        renderEF();
+    }
+
+    function startCam() {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(s => { 
+            document.getElementById('video').srcObject = s; 
+            if(localStorage.getItem('mont_ghost')) document.getElementById('mask').classList.add('locked');
+        });
+    }
+
+    function setBaseline() {
+        const v = document.getElementById('video');
+        const c = document.createElement('canvas');
+        c.width = v.videoWidth; c.height = v.videoHeight;
+        c.getContext('2d').drawImage(v, 0,0);
+        localStorage.setItem('mont_ghost', c.toDataURL('image/png'));
+        loadGhost();
+        document.getElementById('mask').classList.add('locked');
+        alert("Baseline Saved!");
+    }
+
+    function loadGhost() {
+        const data = localStorage.getItem('mont_ghost');
+        const ghost = document.getElementById('ghost-overlay');
+        if(data) { ghost.src = data; ghost.style.display = 'block'; }
+    }
+
+    function saveEntry() {
+        const w = document.getElementById('in-w').value;
+        const c = document.getElementById('in-cm').value;
+        if(!w || !c) return alert("Fill data");
+        database.push({ 
+            date: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'}), 
+            weight: parseFloat(w), cm: parseFloat(c) 
+        });
+        localStorage.setItem('mont_pro_db', JSON.stringify(database));
+        updateChart();
+        alert("Log Saved!");
+    }
+
+    function compareAI() {
+        const val = document.getElementById('in-cm').value;
+        const display = document.getElementById('daily-diff');
+        if(!val || database.length < 1) return alert("Measurement or Data missing");
+        const current = parseFloat(val);
+        let prev = database[database.length - 1];
+        if(current === prev.cm && database.length > 1) prev = database[database.length - 2];
+        
+        const diff = (current - prev.cm).toFixed(1);
+        const color = diff >= 0.5 ? "var(--danger)" : "var(--success)";
+        display.innerHTML = `<div style="color:${color}; border:2px solid ${color}; padding:10px; border-radius:15px; background:white;">AI DIFF: ${diff >= 0 ? '+' : ''}${diff} cm <br><small style="color:#666">vs ${prev.cm} cm</small></div>`;
+        if ('speechSynthesis' in window) window.speechSynthesis.speak(new SpeechSynthesisUtterance(diff >= 0.5 ? "Swelling alert" : "Stable"));
+    }
+
+    function findDr() { 
+        const name = document.getElementById('dr-name').value;
+        window.open(`https://www.google.com/maps/search/${name}+cardiologist`); 
+    }
+
+    function clearHistory() {
+        if(confirm("Clear all data?")) { localStorage.clear(); location.reload(); }
+    }
+
+    const ctx = document.getElementById('dualChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                { label: 'Weight', borderColor: '#007AFF', data: [], yAxisID: 'y', tension: 0.3 },
+                { 
+                    label: 'Ankle', data: [], yAxisID: 'y1', borderColor: '#34c759', 
+                    pointBackgroundColor: [], pointRadius: 5,
+                    segment: { borderColor: ctx => (ctx.p1.raw - ctx.p0.raw >= 0.5) ? '#ff3b30' : '#34c759' }
+                }
+            ]
+        },
+        options: { 
+            responsive: true, maintainAspectRatio: false,
+            scales: { y: { position: 'left' }, y1: { position: 'right', grid: {display:false} } }
+        }
+    });
+
+    function updateChart() {
+        chart.data.labels = database.map(d => d.date);
+        chart.data.datasets[0].data = database.map(d => d.weight);
+        const ankleData = database.map(d => d.cm);
+        chart.data.datasets[1].data = ankleData;
+        chart.data.datasets[1].pointBackgroundColor = ankleData.map((v, i) => (i > 0 && v - ankleData[i-1] >= 0.5) ? '#ff3b30' : '#34c759');
+        chart.update();
+    }
+
+    renderEF();
+    if(database.length > 0) updateChart();
+</script>
+</body>
+</html>
